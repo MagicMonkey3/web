@@ -2,21 +2,187 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Clock</title>
   <style>
-    body {font-family: system-ui, sans-serif; text-align: center; margin-top: 40vh;}
-    #time {font-size: 3rem;}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Trebuchet MS, sans-serif;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      transition: background 1s ease;
+    }
+
+    body.morning {
+      background: linear-gradient(135deg, #ffa500 0%, #ffb347 100%);
+    }
+
+    body.afternoon {
+      background: linear-gradient(135deg, #87ceeb 0%, #4a9eff 100%);
+    }
+
+    body.evening {
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    }
+
+    body.night {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+
+    .container {
+      text-align: center;
+      padding: 2rem;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 300;
+      letter-spacing: 2px;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    #time {
+      font-size: 5rem;
+      font-weight: 700;
+      font-family: 'Monaco', 'Courier New', monospace;
+      display: block;
+      line-height: 1.2;
+      letter-spacing: 0.1em;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      }
+      50% {
+        text-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      }
+    }
+
+    .date {
+      font-size: 1.1rem;
+      margin-top: 1.5rem;
+      opacity: 0.85;
+      letter-spacing: 1px;
+      font-weight: 300;
+    }
+
+    .day {
+      font-size: 1rem;
+      margin-top: 0.5rem;
+      opacity: 0.75;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    @media (max-width: 768px) {
+      #time {
+        font-size: 3rem;
+      }
+
+      h1 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+      }
+
+      .container {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #time {
+        font-size: 2.5rem;
+      }
+
+      h1 {
+        font-size: 1rem;
+      }
+
+      .container {
+        padding: 1rem;
+        border-radius: 15px;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>It is <span id="time">--:--:--</span></h1>
+  <div class="container">
+    <h1>It is <span id="time">--:--:--</span></h1>
+    <div class="date">
+      <div id="dateDisplay">--/--/----</div>
+      <div class="day" id="dayDisplay">--</div>
+    </div>
+  </div>
+
   <script>
     const pad = n => n.toString().padStart(2, '0');
+    
+    const updateTheme = (hours) => {
+      const body = document.body;
+      body.classList.remove('morning', 'afternoon', 'evening', 'night');
+      
+      if (hours >= 5 && hours < 12) {
+        body.classList.add('morning');
+      } else if (hours >= 12 && hours < 17) {
+        body.classList.add('afternoon');
+      } else if (hours >= 17 && hours < 21) {
+        body.classList.add('evening');
+      } else {
+        body.classList.add('night');
+      }
+    };
+
     const tick = () => {
       const d = new Date();
+      const hours = d.getHours();
+      const minutes = d.getMinutes();
+      const seconds = d.getSeconds();
+      
       document.getElementById('time').textContent =
-        `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+      
+      const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+      document.getElementById('dateDisplay').textContent = 
+        d.toLocaleDateString('en-US', options);
+      
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      document.getElementById('dayDisplay').textContent = days[d.getDay()];
+      
+      updateTheme(hours);
     };
+    
     tick();
     setInterval(tick, 1000);
   </script>
