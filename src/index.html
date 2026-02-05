@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Clock</title>
+  <style>
+    body {font-family: system-ui, sans-serif; text-align: center; margin-top: 40vh;}
+    #time {font-size: 3rem;}
+  </style>
+</head>
+<body>
+  <h1>It is <span id="time">--:--:--</span></h1>
+  <script>
+    const pad = n => n.toString().padStart(2, '0');
+    const tick = () => {
+      const d = new Date();
+      document.getElementById('time').textContent =
+        `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    };
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
